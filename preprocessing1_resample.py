@@ -5,8 +5,7 @@ import soundfile as sf
 from glob import glob
 
 def resample_one(filename):
-    fullname=filename.split('/')[-2]
-    singer=fullname.split('_')[0]
+    singer=filename.split('/')[-2]
     songname=filename.split('/')[-1]
     output_path='dataset/'+singer+'/'+songname
     if os.path.exists(output_path):
@@ -22,32 +21,27 @@ def resample_one(filename):
         return
 
 def mkdir_func(input_path):
-    fullname=input_path.split('/')[-2]
-    singer=fullname.split('_')[0]
+    singer=filename.split('/')[-2]
     out_dir = 'dataset/'+singer
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
-def resample_parallel(name,bin_idx,total_bins,num_process):
-    input_paths = glob('dataset/'+name+'/*/*.wav')  
+def resample_parallel(num_process):
+    input_paths = glob('dataset_raw/*/*.wav')  
     print("input_paths",len(input_paths))
-    input_paths = input_paths[int(bin_idx)*len(input_paths)//int(total_bins):int(bin_idx+1)*len(input_paths)//int(total_bins)]
     # multiprocessing with progress bar
     pool = mp.Pool(num_process)
     for _ in tqdm.tqdm(pool.imap_unordered(resample_one, input_paths), total=len(input_paths)):
         pass
 
-def path_parallel(name):
-    input_paths = glob('dataset/'+name+'/*/*.wav')
+def path_parallel():
+    input_paths = glob('dataset_raw/*/*.wav')
     input_paths = list(set(input_paths))#sort
     print("input_paths",len(input_paths))
     for input_path in input_paths:
         mkdir_func(input_path)
 
 if __name__ == "__main__":
-    bin_idx = int(sys.argv[1])
-    total_bins = int(sys.argv[2])
-    num_process = int(sys.argv[3])
-    name=sys.argv[4]
-    path_parallel(name)
-    resample_parallel(name, bin_idx,total_bins,num_process)
+    num_process = int(sys.argv[0])
+    path_parallel()
+    resample_parallel(num_process)

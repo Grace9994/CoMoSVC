@@ -21,7 +21,7 @@ from mel_processing import spectrogram_torch
 logging.getLogger("numba").setLevel(logging.WARNING)
 logging.getLogger("matplotlib").setLevel(logging.WARNING)
 
-dconfig = utils.load_config("configs/vocoder_opensinger/diffusion.yaml")
+dconfig = utils.load_config("configs_template/diffusion.yaml")
 
 
 def process_one(filename, hmodel, device, hop_length, sampling_rate, filter_length, win_length,mel_extractor=None):
@@ -32,7 +32,7 @@ def process_one(filename, hmodel, device, hop_length, sampling_rate, filter_leng
     if not os.path.exists(soft_path):
         wav16k = librosa.resample(wav, orig_sr=sampling_rate, target_sr=16000)
         wav16k = torch.from_numpy(wav16k).to(device)
-        c = hmodel.encoder(wav16k) # 由预训练的模型提取content
+        c = hmodel.encoder(wav16k) # extract content from the pre-trained model
         torch.save(c.cpu(), soft_path)
 
     f0_path = filename + ".f0.npy"
@@ -119,7 +119,6 @@ def parallel_process(filenames, num_processes, hop_length, sampling_rate, filter
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data", type=str, required=True, help="path to input dir")
     parser.add_argument("--config", type=str, default='configs/diffusion.yaml',required=True, help="path to input dir")
     parser.add_argument(
         '--num_processes', type=int, default=1, help='You are advised to set the number of processes to the same as the number of CPU cores')
@@ -132,7 +131,7 @@ if __name__ == "__main__":
     print("Loading Mel Extractor...",dconfig.vocoder.type)
     mel_extractor = Vocoder(dconfig.vocoder.type, dconfig.vocoder.ckpt, device=device)
 
-    filenames = glob("./dataset/"+args.data+"/*/*.wav", recursive=True)  # [:10]
+    filenames = glob("./dataset/*/*.wav", recursive=True)  # [:10]
     shuffle(filenames)
     mp.set_start_method("spawn", force=True)
 

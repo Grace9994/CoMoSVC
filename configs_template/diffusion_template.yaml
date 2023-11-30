@@ -29,7 +29,8 @@ infer:
   speedup: 10
   method: 'dpm-solver++' # 'pndm' or 'dpm-solver' or 'ddim' or 'unipc' or 'dpm-solver++'
 env:
-  expdir: logs/44k/diffusion
+  comodir: logs/como
+  expdir: logs/teacher
   gpu_id: 0
 train:
   num_workers: 4 # If your cpu and gpu are both very strong, set to 0 may be faster!
@@ -41,11 +42,11 @@ train:
   epochs: 100000
   interval_log: 10
   interval_val: 2000
-  interval_force_save: 5000
+  interval_force_save: 2000
   lr: 0.0001
   decay_step: 100000
   gamma: 0.5
   weight_decay: 0
   save_opt: false
 spk:
-  'nyaru': 0
+  'SPEAKER1': 0
