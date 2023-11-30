@@ -1,0 +1,126 @@
+import argparse
+
+import torch
+from loguru import logger
+from torch.optim import lr_scheduler
+
+import os
+os.environ["CUDA_VISIBLE_DEVICES"]='1'
+
+from data_loaders import get_data_loaders
+import utils
+from solver import train
+from ComoSVC import ComoSVC
+from Vocoder import Vocoder
+from utils import load_teacher_model
+from utils import traverse_dir
+
+
+
+
+def parse_args(args=None, namespace=None):
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-c",
+        "--config",
+        type=str,
+        default='configs/m4gan/diffusion.yaml',
+        help="path to the config file")
+    
+    parser.add_argument(
+        "-t",
+        "--teacher",
+        type=bool,
+        default=True,
+        help="if it is the teacher model")
+    
+    parser.add_argument(
+        "-p",
+        "--teacher_model_path",
+        type=str,
+        default="logs/24k/diffusion/m4singer/model_400000.pt",
+        help="path to teacher model")
+    return parser.parse_args(args=args, namespace=namespace)
+
+
+if __name__ == '__main__':
+    # parse commands
+    cmd = parse_args()
+    # load config
+    args = utils.load_config(cmd.config)
+    logger.info(' > config:'+ cmd.config)
+    logger.info(' > exp:'+ args.env.expdir)
+    # teacher_or_not=cmd.teacher
+    teacher_model_path=cmd.teacher_model_path
+    # load vocoder
+    vocoder = Vocoder(args.vocoder.type, args.vocoder.ckpt, device=args.device)
+    
+    # if it is teacher
+    if cmd.teacher:
+        print('comosvc_teacher')
+    else:
+        print('comosvc')
+
+
+    # load model
+    if cmd.teacher:
+        model = ComoSVC(
+                    args.data.encoder_out_channels, 
+                    args.model.n_spk,
+                    args.model.use_pitch_aug,#true
+                    vocoder.dimension,
+                    args.model.n_layers,
+                    args.model.n_chans,
+                    args.model.n_hidden,
+                    teacher=cmd.teacher
+                    )
+        
+        optimizer = torch.optim.AdamW(model.parameters(),lr=args.train.lr)
+        initial_global_step, model, optimizer = utils.load_model(args.env.expdir, model, optimizer, device=args.device)
+    
+    else:
+        model = ComoSVC(
+                    args.data.encoder_out_channels, 
+                    args.model.n_spk,
+                    args.model.use_pitch_aug,
+                    vocoder.dimension,
+                    args.model.n_layers,
+                    args.model.n_chans,
+                    args.model.n_hidden,
+                    teacher=cmd.teacher
+                    )
+        model = load_teacher_model(model,checkpoint_dir=cmd.teacher_model_path) # teacher model path
+      #  optimizer = torch.optim.AdamW(params=model.decoder.denoise_fn.parameters())
+        optimizer = torch.optim.AdamW(params=model.decoder.denoise_fn.parameters())
+        path_pt = traverse_dir(args.env.expdir, ['pt'], is_ext=False)
+        if len(path_pt)>0:
+            initial_global_step, model, optimizer = utils.load_model(args.env.expdir, model, optimizer, device=args.device)
+        else:
+            initial_global_step = 0
+
+    logger.info(f' > Now model timesteps is {model.timesteps}, and k_step_max is {model.k_step_max}')
+
+    for param_group in optimizer.param_groups:
+        param_group['initial_lr'] = args.train.lr
+        param_group['lr'] = args.train.lr * (args.train.gamma ** max(((initial_global_step-2)//args.train.decay_step),0) )
+
+        param_group['weight_decay'] = args.train.weight_decay
+    scheduler = lr_scheduler.StepLR(optimizer, step_size=args.train.decay_step, gamma=args.train.gamma,last_epoch=initial_global_step-2)
+    
+    # device
+    if args.device == 'cuda':
+        torch.cuda.set_device(args.env.gpu_id)
+    model.to(args.device)
+    
+    for state in optimizer.state.values():
+        for k, v in state.items():
+            if torch.is_tensor(v):
+                state[k] = v.to(args.device)
+                    
+    # datas
+    loader_train, loader_valid = get_data_loaders(args, whole_audio=False)
+    
+    train(args, initial_global_step, model, optimizer, scheduler, vocoder, loader_train, loader_valid)
+
+    

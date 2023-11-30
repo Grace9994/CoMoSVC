@@ -1,0 +1,12 @@
+data:
+  sampling_rate: 24000
+  hop_length: 128
+  block_size: 128 # should be Equal to hop_length
+  duration: 2 # Audio duration during training, must be less than the duration of the shortest audio clip
+  filter_length: 512
+  win_length: 512
+
+
+vocoder:
+  type: 'm4-gan'
+  ckpt: 'pretrain/big_v_gan/bigvgan_24khz_100band/g_05000000.zip'
