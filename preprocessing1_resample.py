@@ -22,7 +22,6 @@ def resample_one(filename):
         return
 
 def mkdir_func(input_path):
-    # /data/yiwenl/datasets/OpenSinger/ManRaw/12_凉凉/12_凉凉_1.wav
     fullname=input_path.split('/')[-2]
     singer=fullname.split('_')[0]
     out_dir = 'dataset/'+singer
@@ -30,8 +29,7 @@ def mkdir_func(input_path):
         os.makedirs(out_dir)
 
 def resample_parallel(name,bin_idx,total_bins,num_process):
-    input_paths = glob('dataset/'+name+'/*/*.wav')
-    #input_paths = glob('/data/yiwenl/datasets/'+name+'/*/*.wav')    
+    input_paths = glob('dataset/'+name+'/*/*.wav')  
     print("input_paths",len(input_paths))
     input_paths = input_paths[int(bin_idx)*len(input_paths)//int(total_bins):int(bin_idx+1)*len(input_paths)//int(total_bins)]
     # multiprocessing with progress bar

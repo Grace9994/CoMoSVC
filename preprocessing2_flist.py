@@ -27,7 +27,7 @@ def get_wav_duration(file_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--source_dir", type=str, default="/data/yiwenl/comosvc/so-vits-svc/dataset/24k/OpenSinger", help="path to source dir")
+    parser.add_argument("--source_dir", type=str, default="/dataset/24k/OpenSinger", help="path to source dir")
     parser.add_argument("--speech_encoder", type=str, default="vec768l12", help="choice a speech encoder|'vec768l12','vec256l9','hubertsoft','whisper-ppg','cnhubertlarge','dphubert','whisper-ppg-large','wavlmbase+'")
     parser.add_argument("--vol_aug", action="store_true", help="Whether to use volume embedding and volume augmentation")
     parser.add_argument("--tiny", action="store_true", help="Whether to train sovits tiny")

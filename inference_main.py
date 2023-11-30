@@ -19,10 +19,10 @@ def main():
     parser.add_argument('--clean_names', type=str, nargs='+', default=["A2爱0000.wav","A1打错了0000.wav","A1抱歉抱歉0000.wav","A5大鱼0015.wav","A6背对背拥抱0010.wav","A7没那么简单0033.wav"], help='wav文件名列表，放在raw文件夹下')
     parser.add_argument('--keys', type=int, nargs='+', default=[0], help='音高调整，支持正负（半音）')
     parser.add_argument('--spk_list', type=str, nargs='+', default=['Alto-1'], help='合成目标说话人名称')
-    parser.add_argument('--como_path', type=str, default="/data/yiwenl/comosvc/so-vits-svc/logs/comom4gan/model_700000.pt", help='扩散模型路径')
-    parser.add_argument('--como_config', type=str, default="/data/yiwenl/comosvc/so-vits-svc/logs/comom4gan/config.yaml", help='扩散模型配置文件路径')
-    parser.add_argument('--teacher_path', type=str, default="/data/yiwenl/comosvc/so-vits-svc/logs/24k/diffusion/vocoder/m4gan/model_800000.pt", help='扩散模型路径')
-    parser.add_argument('--teacher_config_path', type=str, default="/data/yiwenl/comosvc/so-vits-svc/logs/24k/diffusion/vocoder/m4gan/config.yaml", help='扩散模型配置文件路径')
+    parser.add_argument('--como_path', type=str, default="/logs/comom4gan/model_700000.pt", help='扩散模型路径')
+    parser.add_argument('--como_config', type=str, default="/logs/comom4gan/config.yaml", help='扩散模型配置文件路径')
+    parser.add_argument('--teacher_path', type=str, default="/logs/24k/diffusion/vocoder/m4gan/model_800000.pt", help='扩散模型路径')
+    parser.add_argument('--teacher_config_path', type=str, default="/logs/24k/diffusion/vocoder/m4gan/config.yaml", help='扩散模型配置文件路径')
 
     args = parser.parse_args()
 
