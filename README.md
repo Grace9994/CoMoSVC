@@ -5,6 +5,18 @@ We proposed a consistency model based Singing Voice Conversion system, which is 
 The paper and codebase of CoMoSVC are still being edited and will be completed as soon as possible.
 
 
+# Environment
+We have tested the code and it runs successfully on Python 3.8, so you can set up your Conda environment using the following command:
+
+```shell
+conda create -n Your_Conda_Environment_Name python=3.8
+```
+Then after activating your conda environment, you can install the required packages under it by:
+
+```shell
+pip install -r requirements.txt
+```
+
 ## Dataset Preparation 
 
 You can refer to different preparation methods based on your needs.
