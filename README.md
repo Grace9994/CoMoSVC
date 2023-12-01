@@ -31,7 +31,7 @@ unzip m4singer_hifigan.zip
 The checkpoints of the vocoder will be in the `m4singer_hifigan` directory
 
 ### 2. ContentVec
-Then you should download the checkpoint [ContentVec](https://ibm.box.com/s/z1wgl1stco8ffooyatzdwsqn2psd9lrr) and the put it in the `Content` directory to extract the content feature.
+You should download the checkpoint [ContentVec](https://ibm.box.com/s/z1wgl1stco8ffooyatzdwsqn2psd9lrr) and the put it in the `Content` directory to extract the content feature.
 
 ### 3. m4singer_pe
 You should download the pitch_extractor checkpoint of the [m4singer_pe](https://drive.google.com/file/d/19QtXNeqUjY3AjvVycEt3G83lXn2HwbaJ/view) and then unzip the zip file by 
@@ -89,14 +89,14 @@ python preprocessing1_resample.py -n num_process
 ```
 num_process is the number of processes, the default num_process is 5.
 
-### 2. Split the training and validation datasets, and generate configuration files.
+### 2. Split the Training and Validation Datasets, and Generate Configuration Files.
 
 ```shell
 python preprocessing2_flist.py
 ```
 
 
-### 3. Generate features
+### 3. Generate Features
 
 ```shell
 python preprocessing3_feature.py -c your_config_file -n num_processes 
@@ -105,16 +105,16 @@ python preprocessing3_feature.py -c your_config_file -n num_processes
 
 ## Training
 
-### 1. train the teacher model
+### 1. Train the Teacher Model
 
 ```shell
 python train.py
 ```
 The checkpoints will be saved in the `logs/teacher` directory
 
-### 2. train the como model
+### 2. Train the Consistency Model
 
-#### if you want to adjust the config file, you can duplicate a new config file and modify some parameters.
+If you want to adjust the config file, you can duplicate a new config file and modify some parameters.
 
 
 ```shell
@@ -124,7 +124,7 @@ python train.py -t -c Your_new_configfile_path -p The_teacher_model_checkpoint_p
 ## Inference
 You should put the audios you want to convert under the `raw` directory firstly.
 
-### Inference by teacher model
+### Inference by the Teacher Model
 
 ```shell
 # Example
@@ -140,7 +140,7 @@ python inference_main.py -tm "logs/teacher/model_800000.pth" -tc "logs/teacher/c
 
 -s refers to the target singer
 
-### Inference by student model
+### Inference by the Consistency Model
 
 ```shell
 # Example
