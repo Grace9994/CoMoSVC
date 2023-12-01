@@ -120,7 +120,7 @@ python train.py
 ```
 Checkpoint将存于 `logs/teacher` 目录中
 
-### 2. 训练 como model
+### 2. 训练 consistency model
 
 #### 如果你想调整配置文件，你可以复制一个新的配置文件并修改一些参数。
 
