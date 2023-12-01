@@ -25,7 +25,7 @@ def parse_args(args=None, namespace=None):
         "-c",
         "--config",
         type=str,
-        default='configs/m4gan/diffusion.yaml',
+        default='configs/diffusion.yaml',
         help="path to the config file")
     
     parser.add_argument(
@@ -56,12 +56,6 @@ if __name__ == '__main__':
     # load vocoder
     vocoder = Vocoder(args.vocoder.type, args.vocoder.ckpt, device=args.device)
     
-    # if it is teacher
-    if cmd.teacher:
-        print('comosvc_teacher')
-    else:
-        print('comosvc')
-
 
     # load model
     if cmd.teacher:
@@ -99,7 +93,12 @@ if __name__ == '__main__':
         else:
             initial_global_step = 0
 
-    logger.info(f' > Now model timesteps is {model.timesteps}, and k_step_max is {model.k_step_max}')
+    if cmd.teacher:
+        logger.info(f' > The Teacher Model is training now.')
+    else:
+        logger.info(f' > The Student Model CoMoSVC is training now.')
+
+
 
     for param_group in optimizer.param_groups:
         param_group['initial_lr'] = args.train.lr
@@ -121,6 +120,6 @@ if __name__ == '__main__':
     # datas
     loader_train, loader_valid = get_data_loaders(args, whole_audio=False)
     
-    train(args, initial_global_step, model, optimizer, scheduler, vocoder, loader_train, loader_valid)
+    train(args, initial_global_step, model, optimizer, scheduler, vocoder, loader_train, loader_valid,teacher=cmd.teacher)
 
     

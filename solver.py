@@ -42,7 +42,7 @@ def test(args, model, vocoder, loader_test, saver):
                     data['f0'], 
                     data['volume'], 
                     data['spk_id'],
-                    gt_spec=None if model.k_step_max == model.timesteps else data['mel'],
+                    gt_spec= data['mel'],
                     infer=True
                     )
             signal = vocoder.infer(mel, data['f0'])

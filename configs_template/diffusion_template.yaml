@@ -24,7 +24,7 @@ model:
 device: cuda
 vocoder:
   type: 'm4-gan'
-  ckpt: 'vocoder/model_ckpt_steps_1970000.ckpt'
+  ckpt: 'm4singer_hifigan/model_ckpt_steps_1970000.ckpt'
 infer:
   speedup: 10
   method: 'dpm-solver++' # 'pndm' or 'dpm-solver' or 'ddim' or 'unipc' or 'dpm-solver++'

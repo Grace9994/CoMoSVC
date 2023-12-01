@@ -1,7 +1,6 @@
 import argparse
 import logging
 import os
-os.environ['CUDA_VISIBLE_DEVICES']='4'
 import random
 from concurrent.futures import ProcessPoolExecutor
 from glob import glob
@@ -15,16 +14,16 @@ from loguru import logger
 from tqdm import tqdm
 
 import utils
-import Vocoder
+from Vocoder import Vocoder
 from mel_processing import spectrogram_torch
 
 logging.getLogger("numba").setLevel(logging.WARNING)
 logging.getLogger("matplotlib").setLevel(logging.WARNING)
 
-dconfig = utils.load_config("configs_template/diffusion.yaml")
+dconfig = utils.load_config("./configs/diffusion.yaml")
 
 
-def process_one(filename, hmodel, device, hop_length, sampling_rate, filter_length, win_length,mel_extractor=None):
+def process_one(filename, hmodel, device, hop_length, sampling_rate, filter_length, win_length):
     wav, sr = librosa.load(filename, sr=sampling_rate)
     audio_norm = torch.FloatTensor(wav)
     audio_norm = audio_norm.unsqueeze(0)
@@ -70,6 +69,8 @@ def process_one(filename, hmodel, device, hop_length, sampling_rate, filter_leng
 
 
     mel_path = filename + ".mel.npy"
+    mel_extractor = Vocoder(dconfig.vocoder.type, dconfig.vocoder.ckpt, device=device)
+
     if not os.path.exists(mel_path) and mel_extractor is not None:
         mel_t = mel_extractor.extract(audio_norm.to(device), sampling_rate)
         mel = mel_t.squeeze().to('cpu').numpy()
@@ -92,7 +93,7 @@ def process_one(filename, hmodel, device, hop_length, sampling_rate, filter_leng
         np.save(aug_vol_path,aug_vol.to('cpu').numpy())
 
 
-def process_batch(file_chunk, hop_length, sampling_rate, filter_length, win_length, mel_extractor=None, device="cpu"):
+def process_batch(file_chunk, hop_length, sampling_rate, filter_length, win_length, device="cpu"):
     logger.info("Loading speech encoder for content...")
     rank = mp.current_process()._identity
     rank = rank[0] if len(rank) > 0 else 0
@@ -104,24 +105,24 @@ def process_batch(file_chunk, hop_length, sampling_rate, filter_length, win_leng
     hmodel = ContentVec768L12(device = device)
     logger.info(f"Loaded speech encoder for rank {rank}")
     for filename in tqdm(file_chunk, position = rank):
-        process_one(filename, hmodel, device, hop_length, sampling_rate, filter_length, win_length, mel_extractor)
+        process_one(filename, hmodel, device, hop_length, sampling_rate, filter_length, win_length)
 
-def parallel_process(filenames, num_processes, hop_length, sampling_rate, filter_length, win_length, mel_extractor, device):
+def parallel_process(filenames, num_processes, hop_length, sampling_rate, filter_length, win_length, device):
     with ProcessPoolExecutor(max_workers=num_processes) as executor:
         tasks = []
         for i in range(num_processes):
             start = int(i * len(filenames) / num_processes)
             end = int((i + 1) * len(filenames) / num_processes)
             file_chunk = filenames[start:end]
-            tasks.append(executor.submit(process_batch, file_chunk, hop_length, sampling_rate, filter_length, win_length, mel_extractor, device=device))
+            tasks.append(executor.submit(process_batch, file_chunk, hop_length, sampling_rate, filter_length, win_length,device=device))
         for task in tqdm(tasks, position = 0):
             task.result()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default='configs/diffusion.yaml',required=True, help="path to input dir")
+    parser.add_argument('-c',"--config", type=str, default='configs/diffusion.yaml', help="path to input dir")
     parser.add_argument(
-        '--num_processes', type=int, default=1, help='You are advised to set the number of processes to the same as the number of CPU cores')
+        '-n','--num_processes', type=int, default=1, help='You are advised to set the number of processes to the same as the number of CPU cores')
     args = parser.parse_args()
 
     dconfig = utils.load_config(args.config)
@@ -129,7 +130,7 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info("Using device: " + str(device))
     print("Loading Mel Extractor...",dconfig.vocoder.type)
-    mel_extractor = Vocoder(dconfig.vocoder.type, dconfig.vocoder.ckpt, device=device)
+    # mel_extractor = Vocoder(dconfig.vocoder.type, dconfig.vocoder.ckpt, device=device)
 
     filenames = glob("./dataset/*/*.wav", recursive=True)  # [:10]
     shuffle(filenames)
@@ -139,4 +140,4 @@ if __name__ == "__main__":
     if num_processes == 0:
         num_processes = os.cpu_count()
 
-    parallel_process(filenames, num_processes, dconfig.data.hop_length, dconfig.data.sampling_rate, dconfig.data.filter_length, dconfig.data.win_length, mel_extractor, device)
+    parallel_process(filenames, num_processes, dconfig.data.hop_length, dconfig.data.sampling_rate, dconfig.data.filter_length, dconfig.data.win_length, device)

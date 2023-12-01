@@ -1,9 +1,33 @@
-## Dataset Preparation
+# CoMoSVC
 
-Simply place the dataset in the `dataset_raw` directory with the following file structure:
+We proposed a consistency model based Singing Voice Conversion system, which is inspired by CoMoSpeech: One-Step Speech and Singing Voice Synthesis via Consistency Model.The details can be found in https://github.com/zhenye234/CoMoSpeech
 
+The paper and codebase of CoMoSVC are still being edited and will be completed as soon as possible.
+
+
+## Dataset Preparation 
+
+You can refer to different preparation methods based on your needs.
+
+Preparation With Slicing can help you remove the silent parts and slice the audio for stable training.
+
+
+### 0. Preparation With Slicing
+
+Please place your original dataset in the `dataset_slice` directory.
+
+The original audios can be in any waveformat which should be specified in the command line. You can designate the length of slices you want, the unit of slice_size is milliseconds. The default wavformat and slice_size is mp3 and 10000 respectively.
+
+```shell
+python preparation_slice.py -w your_wavformat -s slice_size
 ```
 
+### 1. Preparation Without Slicing
+
+You can just place the dataset in the `dataset_raw` directory with the following file structure:
+
+```
+dataset_raw
 ├───speaker0
 │   ├───xxx1-xxx1.wav
 │   ├───...
@@ -17,19 +41,12 @@ Simply place the dataset in the `dataset_raw` directory with the following file 
 
 ##  Preprocessing
 
-### 0. Slice audio
-
-```shell
-python preprocessing0_slice.py wavformat slice_size
-```
-
 ### 1. Resample to 24000Hz and mono
 
 ```shell
-python preprocessing1_resample.py num_process
+python preprocessing1_resample.py -n num_process
 ```
-
-
+num_process is the number of processes, the default num_process is 5.
 
 ### 2. Split the training and validation datasets, and generate configuration files.
 
@@ -43,8 +60,20 @@ python preprocessing2_flist.py
 
 ### 3. Generate features
 
+You should first download https://drive.google.com/file/d/10LD3sq_zmAibl379yTW5M-LXy2l_xk6h/view and then unzip the zip file by
+
 ```shell
-python preprocessing3_features.py 
+unzip m4singer_hifigan.zip
+```
+
+the checkpoints of the vocoder will be in the `m4singer_hifigan` directory
+
+Then you should download the checkpoint https://ibm.box.com/s/z1wgl1stco8ffooyatzdwsqn2psd9lrr and the put it in the `Content` directory to extract the content feature.
+
+and then run the command
+
+```shell
+python preprocessing3_feature.py -c your_config_file -n num_processes 
 ```
 
 
@@ -55,7 +84,7 @@ python preprocessing3_features.py
 ```shell
 python train.py
 ```
-
+The checkpoints will be saved in the `logs/teacher` directory
 
 ### 2. train the como model
 

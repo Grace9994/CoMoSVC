@@ -1,8 +1,9 @@
 import librosa
-import os,sys,tqdm
+import os,tqdm
 import multiprocessing as mp
 import soundfile as sf
 from glob import glob
+import argparse
 
 def resample_one(filename):
     singer=filename.split('/')[-2]
@@ -21,7 +22,7 @@ def resample_one(filename):
         return
 
 def mkdir_func(input_path):
-    singer=filename.split('/')[-2]
+    singer=input_path.split('/')[-2]
     out_dir = 'dataset/'+singer
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
@@ -36,12 +37,15 @@ def resample_parallel(num_process):
 
 def path_parallel():
     input_paths = glob('dataset_raw/*/*.wav')
-    input_paths = list(set(input_paths))#sort
+    input_paths = list(set(input_paths)) # sort
     print("input_paths",len(input_paths))
     for input_path in input_paths:
         mkdir_func(input_path)
 
 if __name__ == "__main__":
-    num_process = int(sys.argv[0])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-n","--num_process", type=int, default=5, help="the number of process")
+    args = parser.parse_args()
+    num_process = args.num_process
     path_parallel()
     resample_parallel(num_process)

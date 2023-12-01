@@ -1,22 +1,22 @@
 import glob
 import os
-from re import X
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
 from pydub.utils import make_chunks
-import logging
+import argparse
 from multiprocessing import Pool
-import sys
 from glob import glob
 
 def process(filename,wavformat,size):
-    songname = filename.split('/')[-1].strip('.'+wavformat)#不包含.wav
+    songname = filename.split('/')[-1].strip('.'+wavformat)
     singer = filename.split('/')[-2]
-    slice_name = './slice/'+singer+'/'+songname
-    if not os.path.exists('./slice/'+singer):
-        os.mkdir('./slice/'+singer)
-    #去除静音部分
-    audio_segment = AudioSegment.from_file(filename)#加载音频
+    slice_name = './dataset_raw/'+singer+'/'+songname
+    
+    if not os.path.exists('./dataset_raw/'+singer):
+        os.mkdir('./dataset_raw/'+singer)
+
+    # Removing the silent parts
+    audio_segment = AudioSegment.from_file(filename) # Loading the audio
     list_split_on_silence = split_on_silence(
         audio_segment, min_silence_len=600,
         silence_thresh=-40,                         
@@ -24,10 +24,8 @@ def process(filename,wavformat,size):
     sum=audio_segment[:1]  
     for i, chunk in enumerate(list_split_on_silence):
         sum=sum+chunk
-        #sum.export(sum_name+"."+wavformat, format=wavformat)
 
-    #进行切割片段
-    #size = 10000  #切割的毫秒数
+    # Slicing
     chunks = make_chunks(sum, size)  
 
     for i, chunk in enumerate(chunks):
@@ -39,10 +37,13 @@ def process(filename,wavformat,size):
             
 
 if __name__ == '__main__':
-    wavformat = sys.argv[1]
-    size = int(sys.argv[2])
-    files=glob('./dataset_raw/*.'+wavformat)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-w","--wavformat", type=str, default="wav", help="the wavformat of original data")
+    parser.add_argument("-s","--size",  type=int, default=10000, help="the length of audio slices")
+    args = parser.parse_args()
+    wavformat = args.wavformat
+    size = args.size
+    files=glob('./dataset_slice/*/*.'+wavformat)
+
     for file in files:
         process(file,wavformat,size)
-    
-   

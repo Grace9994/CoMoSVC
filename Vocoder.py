@@ -12,7 +12,6 @@ class Vocoder:
             device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.device = device # device
         self.vocodertype = vocoder_type
-        print("The Used Vocoder is: ", vocoder_type)
         if vocoder_type == 'm4-gan':
             self.vocoder = M4GAN(vocoder_ckpt, device = device)
         else:
@@ -80,11 +79,11 @@ class M4GAN(torch.nn.Module):
     def forward(self, mel, f0):
         ckpt_dict = torch.load(self.model_path, map_location=self.device)
         state = ckpt_dict["state_dict"]["model_gen"]
-        vocoder = HifiGanGenerator(self.h).to(self.device)
-        vocoder.load_state_dict(state, strict=True)
-        vocoder.remove_weight_norm()
-        vocoder = vocoder.eval()
+        self.model = HifiGanGenerator(self.h).to(self.device)
+        self.model.load_state_dict(state, strict=True)
+        self.model.remove_weight_norm()
+        self.model = self.model.eval()
         c = mel.transpose(2, 1)
-        y = vocoder(c,f0).view(-1)
+        y = self.model(c,f0).view(-1)
 
         return y[None]
