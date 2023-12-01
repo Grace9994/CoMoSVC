@@ -5,7 +5,7 @@ We proposed a consistency model based Singing Voice Conversion system, which is 
 The paper and codebase of CoMoSVC are still being edited and will be completed as soon as possible.
 
 
-# Environment
+## Environment
 We have tested the code and it runs successfully on Python 3.8, so you can set up your Conda environment using the following command:
 
 ```shell
@@ -17,8 +17,36 @@ Then after activating your conda environment, you can install the required packa
 pip install -r requirements.txt
 ```
 
+## Download the Checkpoints
+### 1. m4singer_hifigan
+
+You should first download [m4singer_hifigan](https://drive.google.com/file/d/10LD3sq_zmAibl379yTW5M-LXy2l_xk6h/view) and then unzip the zip file by
+```shell
+unzip m4singer_hifigan.zip
+```
+The checkpoints of the vocoder will be in the `m4singer_hifigan` directory
+
+### 2. ContentVec
+Then you should download the checkpoint [Content](https://ibm.box.com/s/z1wgl1stco8ffooyatzdwsqn2psd9lrr) and the put it in the `Content` directory to extract the content feature.
+
+### 3.m4singer_pe
+You should download the pitch_extractor checkpoint of the [m4singer_pe](https://drive.google.com/file/d/19QtXNeqUjY3AjvVycEt3G83lXn2HwbaJ/view) and then unzip the zip file by 
+
+```shell
+unzip m4singer_pe.zip
+```
+
 ## Dataset Preparation 
 
+You should first create the folders by
+
+```shell
+mkdir dataset_raw
+```
+
+```shell
+mkdir dataset
+```
 You can refer to different preparation methods based on your needs.
 
 Preparation With Slicing can help you remove the silent parts and slice the audio for stable training.
@@ -69,18 +97,6 @@ python preprocessing2_flist.py
 
 ### 3. Generate features
 
-You should first download https://drive.google.com/file/d/10LD3sq_zmAibl379yTW5M-LXy2l_xk6h/view and then unzip the zip file by
-
-```shell
-unzip m4singer_hifigan.zip
-```
-
-the checkpoints of the vocoder will be in the `m4singer_hifigan` directory
-
-Then you should download the checkpoint https://ibm.box.com/s/z1wgl1stco8ffooyatzdwsqn2psd9lrr and the put it in the `Content` directory to extract the content feature.
-
-and then run the command
-
 ```shell
 python preprocessing3_feature.py -c your_config_file -n num_processes 
 ```
@@ -98,12 +114,6 @@ The checkpoints will be saved in the `logs/teacher` directory
 ### 2. train the como model
 
 #### if you want to adjust the config file, you can duplicate a new config file and modify some parameters.
-
-You should download the pitch_extractor checkpoint from the  website https://drive.google.com/file/d/19QtXNeqUjY3AjvVycEt3G83lXn2HwbaJ/view and then unzip the zip file by 
-
-```shell
-unzip m4singer_pe.zip
-```
 
 
 ```shell
