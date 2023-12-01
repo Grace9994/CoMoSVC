@@ -139,4 +139,7 @@ python inference_main.py -tm "logs/teacher/model_800000.pth" -tc "logs/teacher/c
 python inference_main.py -cm "logs/como/model_800000.pth" -tc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
 ```
 -cm refers to the como_model_path
+
 -cc refers to the como_config_path
+
+-t means it is not the teacher model and you don't need to specify anything after it 
