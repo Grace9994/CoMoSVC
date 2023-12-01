@@ -64,7 +64,10 @@ def test(args, model, vocoder, loader_test, saver):
                     data['spk_id'], 
                     gt_spec=data['mel'],
                     infer=False)
-                test_loss += loss.item()
+                if isinstance(loss, list):
+                    test_loss += loss[0].item()
+                else:
+                    test_loss += loss.item()
             
             # log mel
             saver.log_spec(f"{speaker}_{fn}.wav", data['mel'], mel)
@@ -128,13 +131,16 @@ def train(args, initial_global_step, model, optimizer, scheduler, vocoder, loade
             
             # forward
             if dtype == torch.float32:
-                # 这里的model是Unit2Mel，里面的decoder才是Diffusion以及decoder
                 loss = model(data['units'].float(), data['f0'], data['volume'], data['spk_id'], 
                                 aug_shift = data['aug_shift'], gt_spec=data['mel'].float(), infer=False)
             else:
                 with autocast(device_type=args.device, dtype=dtype):
                     loss = model(data['units'], data['f0'], data['volume'], data['spk_id'], 
                                     aug_shift = data['aug_shift'], gt_spec=data['mel'], infer=False)
+            if not teacher:        
+                loss_mel = loss[0]*50 
+                loss_pitch = loss[1] 
+                loss = loss_mel +loss_pitch
             # loss=loss*1000
             # handle nan loss
             if torch.isnan(loss):
@@ -170,6 +176,14 @@ def train(args, initial_global_step, model, optimizer, scheduler, vocoder, loade
                 saver.log_value({
                     'train/loss': loss.item()
                 })
+
+                if not teacher:
+                    saver.log_value({
+                        'train/loss_pitch': loss_pitch.item()
+                    })
+                    saver.log_value({
+                        'train/loss_mel': loss_mel.item()
+                    })
                 
                 saver.log_value({
                     'train/lr': current_lr

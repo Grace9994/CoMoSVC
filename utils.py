@@ -3,6 +3,38 @@ import json
 import yaml
 import os
 import copy
+from torch.nn import functional as F
+
+def repeat_expand_2d(content, target_len, mode = 'left'):
+    # content : [h, t]
+    return repeat_expand_2d_left(content, target_len) if mode == 'left' else repeat_expand_2d_other(content, target_len, mode)
+
+
+
+def repeat_expand_2d_left(content, target_len):
+    # content : [h, t]
+
+    src_len = content.shape[-1]
+    target = torch.zeros([content.shape[0], target_len], dtype=torch.float).to(content.device)
+    temp = torch.arange(src_len+1) * target_len / src_len
+    current_pos = 0
+    for i in range(target_len):
+        if i < temp[current_pos+1]:
+            target[:, i] = content[:, current_pos]
+        else:
+            current_pos += 1
+            target[:, i] = content[:, current_pos]
+
+    return target
+
+
+# mode : 'nearest'| 'linear'| 'bilinear'| 'bicubic'| 'trilinear'| 'area'
+def repeat_expand_2d_other(content, target_len, mode = 'nearest'):
+    # content : [h, t]
+    content = content[None,:,:]
+    target = F.interpolate(content,size=target_len,mode=mode)[0]
+    return target
+
 
 
 def traverse_dir(
@@ -113,6 +145,21 @@ class InferHParams(HParams):
     return self.get(index)
 
 
+def make_positions(tensor, padding_idx):
+    """Replace non-padding symbols with their position numbers.
+    Position numbers begin at padding_idx+1. Padding symbols are ignored.
+    """
+    # The series of casts and type-conversions here are carefully
+    # balanced to both work with ONNX export and XLA. In particular XLA
+    # prefers ints, cumsum defaults to output longs, and ONNX doesn't know
+    # how to handle the dtype kwarg in cumsum.
+    mask = tensor.ne(padding_idx).int()
+    return (
+                   torch.cumsum(mask, dim=1).type_as(mask) * mask
+           ).long() + padding_idx
+
+
+
 class Volume_Extractor:
     def __init__(self, hop_size = 512):
         self.hop_size = hop_size
@@ -177,6 +224,19 @@ def load_teacher_model(model,checkpoint_dir):
     model_resumed = torch.load(checkpoint_dir)
     model.load_state_dict(model_resumed['model'],strict=False)
  
+    model.decoder.denoise_fn_ema = copy.deepcopy(model.decoder.denoise_fn) 
+    model.decoder.denoise_fn_pretrained= copy.deepcopy(model.decoder.denoise_fn)
+    return model
+
+
+def load_teacher_model_with_pitch(model,checkpoint_dir):
+    model_resumed = torch.load(checkpoint_dir)
+    model_pe_resumed = torch.load('./m4singer_pe/model_ckpt_steps_280000.ckpt')['state_dict']
+    prefix_in_ckpt ='model'
+    model_pe_resumed = {k[len(prefix_in_ckpt) + 1:]: v for k, v in model_pe_resumed.items()
+                      if k.startswith(f'{prefix_in_ckpt}.')}
+    model.load_state_dict(model_resumed['model'],strict=False)
+    model.decoder.pe.load_state_dict(model_pe_resumed,strict=True)
     model.decoder.denoise_fn_ema = copy.deepcopy(model.decoder.denoise_fn) 
     model.decoder.denoise_fn_pretrained= copy.deepcopy(model.decoder.denoise_fn)
     return model

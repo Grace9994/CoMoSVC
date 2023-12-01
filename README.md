@@ -90,8 +90,15 @@ The checkpoints will be saved in the `logs/teacher` directory
 
 #### if you want to adjust the config file, you can duplicate a new config file and modify some parameters.
 
+You should download the pitch_extractor checkpoint from the  website https://drive.google.com/file/d/19QtXNeqUjY3AjvVycEt3G83lXn2HwbaJ/view and then unzip the zip file by 
+
 ```shell
-python train.py -t False -c Your_new_configfile_path -p The_teacher_model_path 
+unzip m4singer_hifigan.zip
+```
+
+
+```shell
+python train.py -t -c Your_new_configfile_path -p The_teacher_model_checkpoint_path 
 ```
 
 ## Inference
