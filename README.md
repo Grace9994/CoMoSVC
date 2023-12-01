@@ -27,9 +27,9 @@ unzip m4singer_hifigan.zip
 The checkpoints of the vocoder will be in the `m4singer_hifigan` directory
 
 ### 2. ContentVec
-Then you should download the checkpoint [Content](https://ibm.box.com/s/z1wgl1stco8ffooyatzdwsqn2psd9lrr) and the put it in the `Content` directory to extract the content feature.
+Then you should download the checkpoint [ContentVec](https://ibm.box.com/s/z1wgl1stco8ffooyatzdwsqn2psd9lrr) and the put it in the `Content` directory to extract the content feature.
 
-### 3.m4singer_pe
+### 3. m4singer_pe
 You should download the pitch_extractor checkpoint of the [m4singer_pe](https://drive.google.com/file/d/19QtXNeqUjY3AjvVycEt3G83lXn2HwbaJ/view) and then unzip the zip file by 
 
 ```shell
