@@ -7,7 +7,6 @@ from pathlib import Path
 import librosa
 import numpy as np
 
-# import onnxruntime
 import soundfile
 import torch
 import torchaudio
@@ -68,7 +67,7 @@ class F0FilterException(Exception):
 
 class Svc(object):
     def __init__(self,
-                 diffusion_model_path="logs/44k/diffusion/model_0.pt",
+                 diffusion_model_path="logs/como/model_8000.pt",
                  diffusion_config_path="configs/diffusion.yaml",
                  teacher = False
                  ):
@@ -153,19 +152,23 @@ class Svc(object):
             print("inference_time is:{}".format(use_time))
         return audio, audio.shape[-1], n_frames
 
+    def clear_empty(self):
+        # clean up vram
+        torch.cuda.empty_cache()
+
 
     def slice_inference(self,
                         raw_audio_path,
                         spk,
                         tran,
-                        slice_db=-40, # -40,意思是小于这个的都算作静音片段，进行切片，在下面的
+                        slice_db=-40, # -40
                         pad_seconds=0.5,
                         clip_seconds=0,
                         ):
 
         wav_path = Path(raw_audio_path).with_suffix('.wav')
         chunks = slicer.cut(wav_path, db_thresh=slice_db)
-        audio_data, audio_sr = slicer.chunks2audio(wav_path, chunks) # 分段读取的audio
+        audio_data, audio_sr = slicer.chunks2audio(wav_path, chunks) 
         per_size = int(clip_seconds*audio_sr)
         lg_size = 0
         global_frame = 0

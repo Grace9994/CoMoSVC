@@ -2,7 +2,7 @@ import os
 import torch
 import torch.nn as nn
 import yaml
-import Vocoder
+from Vocoder import Vocoder
 from como import Como
 
 
@@ -50,7 +50,6 @@ def load_model_vocoder(
     model.to(device)
     model.load_state_dict(ckpt['model'],strict=False)
     model.eval()
-    print(f'Loaded diffusion model, sampler is {args.infer.method}, speedup: {args.infer.speedup} ')
     return model, vocoder, args
 
 

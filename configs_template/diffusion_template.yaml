@@ -4,11 +4,11 @@ data:
   duration: 2 # Audio duration during training, must be less than the duration of the shortest audio clip
   filter_length: 512
   win_length: 512
-  encoder: 'vec768l12' # 'hubertsoft', 'vec256l9', 'vec768l12'
+  encoder: 'vec768l12' # 
   cnhubertsoft_gate: 10
   encoder_sample_rate: 16000
   encoder_hop_size: 320
-  encoder_out_channels: 768 # 256 if using 'hubertsoft'
+  encoder_out_channels: 768 # 
   training_files: "filelists/train.txt"
   validation_files: "filelists/val.txt"
   extensions: # List of extension included in the data collection
@@ -26,8 +26,7 @@ vocoder:
   type: 'm4-gan'
   ckpt: 'm4singer_hifigan/model_ckpt_steps_1970000.ckpt'
 infer:
-  speedup: 10
-  method: 'dpm-solver++' # 'pndm' or 'dpm-solver' or 'ddim' or 'unipc' or 'dpm-solver++'
+  method: 'dpm-solver++' # 
 env:
   comodir: logs/como
   expdir: logs/teacher
