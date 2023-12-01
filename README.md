@@ -123,9 +123,13 @@ If you want to use the teacher model for inference, you can run
 python inference_main.py -tm "logs/teacher/model_800000.pth" -tc "logs/teacher/config.yaml" -n "src.wav" -k 0 -s "target_singer"
 ```
 -tm refers to the teacher_model_path
+
 -tc refers to the teacher_config_path
+
 -n refers to the source audio
+
 -k refers to the pitch shift, it can be positive and negative (semitone) values
+
 -s refers to the target singer
 
 If you want to use the student model CoMOSVC for inference, you can run 
