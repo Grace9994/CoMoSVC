@@ -116,7 +116,7 @@ python train.py -t -c Your_new_configfile_path -p The_teacher_model_checkpoint_p
 ## Inference
 You should put the audios you want to convert under the `raw` directory firstly.
 
-If you want to use the teacher model for inference, you can run 
+### Inference by teacher model
 
 ```shell
 # Example
@@ -132,7 +132,7 @@ python inference_main.py -tm "logs/teacher/model_800000.pth" -tc "logs/teacher/c
 
 -s refers to the target singer
 
-If you want to use the student model CoMOSVC for inference, you can run 
+### Inference by student model
 
 ```shell
 # Example
