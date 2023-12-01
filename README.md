@@ -66,9 +66,6 @@ num_process is the number of processes, the default num_process is 5.
 python preprocessing2_flist.py
 ```
 
-##### diffusion.yaml
-
-
 
 ### 3. Generate features
 
