@@ -105,7 +105,7 @@ The checkpoints will be saved in the `logs/teacher` directory
 You should download the pitch_extractor checkpoint from the  website https://drive.google.com/file/d/19QtXNeqUjY3AjvVycEt3G83lXn2HwbaJ/view and then unzip the zip file by 
 
 ```shell
-unzip m4singer_hifigan.zip
+unzip m4singer_pe.zip
 ```
 
 
