@@ -60,8 +60,8 @@ class Como(BaseModule):
 
     def EDMPrecond(self, x, sigma ,cond,denoise_fn):
         sigma = sigma.reshape(-1, 1, 1 ) 
-        c_skip = self.sigma_data ** 2 / (sigma ** 2 + self.sigma_data ** 2)
-        c_out = sigma * self.sigma_data / (sigma ** 2 + self.sigma_data ** 2).sqrt()
+        c_skip = self.sigma_data ** 2 / ((sigma-sigma_min) ** 2 + self.sigma_data ** 2)
+        c_out = (sigma-sigma_min) * self.sigma_data / (sigma ** 2 + self.sigma_data ** 2).sqrt()
         c_in = 1 / (self.sigma_data ** 2 + sigma ** 2).sqrt()
         c_noise = sigma.log() / 4
         F_x =  denoise_fn((c_in * x), c_noise.flatten(),cond) 
