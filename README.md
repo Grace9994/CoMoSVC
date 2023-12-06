@@ -1,11 +1,15 @@
-# CoMoSVC
+<div align="center">
+<h1>CoMoSVC: One-Step Consistency Model Based Singing Voice Conversion</h1>
 
-We proposed a consistency model based Singing Voice Conversion system, which is inspired by CoMoSpeech: One-Step Speech and Singing Voice Synthesis via Consistency Model.The details can be found in https://github.com/zhenye234/CoMoSpeech
+[中文文档](./Readme_CN.md)
+</div>
+
+We propose a consistency model based Singing Voice Conversion system, which is inspired by [CoMoSpeech](https://github.com/zhenye234/CoMoSpeech): One-Step Speech and Singing Voice Synthesis via Consistency Model. 
 
 The paper and codebase of CoMoSVC are still being edited and will be completed as soon as possible.
 
 
-# Environment
+## Environment
 We have tested the code and it runs successfully on Python 3.8, so you can set up your Conda environment using the following command:
 
 ```shell
@@ -17,8 +21,33 @@ Then after activating your conda environment, you can install the required packa
 pip install -r requirements.txt
 ```
 
+## Download the Checkpoints
+### 1. m4singer_hifigan
+
+You should first download [m4singer_hifigan](https://drive.google.com/file/d/10LD3sq_zmAibl379yTW5M-LXy2l_xk6h/view) and then unzip the zip file by
+```shell
+unzip m4singer_hifigan.zip
+```
+The checkpoints of the vocoder will be in the `m4singer_hifigan` directory
+
+### 2. ContentVec
+You should download the checkpoint [ContentVec](https://ibm.box.com/s/z1wgl1stco8ffooyatzdwsqn2psd9lrr) and the put it in the `Content` directory to extract the content feature.
+
+### 3. m4singer_pe
+You should download the pitch_extractor checkpoint of the [m4singer_pe](https://drive.google.com/file/d/19QtXNeqUjY3AjvVycEt3G83lXn2HwbaJ/view) and then unzip the zip file by 
+
+```shell
+unzip m4singer_pe.zip
+```
+
 ## Dataset Preparation 
 
+You should first create the folders by
+
+```shell
+mkdir dataset_raw
+mkdir dataset
+```
 You can refer to different preparation methods based on your needs.
 
 Preparation With Slicing can help you remove the silent parts and slice the audio for stable training.
@@ -60,29 +89,14 @@ python preprocessing1_resample.py -n num_process
 ```
 num_process is the number of processes, the default num_process is 5.
 
-### 2. Split the training and validation datasets, and generate configuration files.
+### 2. Split the Training and Validation Datasets, and Generate Configuration Files.
 
 ```shell
 python preprocessing2_flist.py
 ```
 
-##### diffusion.yaml
 
-
-
-### 3. Generate features
-
-You should first download https://drive.google.com/file/d/10LD3sq_zmAibl379yTW5M-LXy2l_xk6h/view and then unzip the zip file by
-
-```shell
-unzip m4singer_hifigan.zip
-```
-
-the checkpoints of the vocoder will be in the `m4singer_hifigan` directory
-
-Then you should download the checkpoint https://ibm.box.com/s/z1wgl1stco8ffooyatzdwsqn2psd9lrr and the put it in the `Content` directory to extract the content feature.
-
-and then run the command
+### 3. Generate Features
 
 ```shell
 python preprocessing3_feature.py -c your_config_file -n num_processes 
@@ -91,22 +105,16 @@ python preprocessing3_feature.py -c your_config_file -n num_processes
 
 ## Training
 
-### 1. train the teacher model
+### 1. Train the Teacher Model
 
 ```shell
 python train.py
 ```
 The checkpoints will be saved in the `logs/teacher` directory
 
-### 2. train the como model
+### 2. Train the Consistency Model
 
-#### if you want to adjust the config file, you can duplicate a new config file and modify some parameters.
-
-You should download the pitch_extractor checkpoint from the  website https://drive.google.com/file/d/19QtXNeqUjY3AjvVycEt3G83lXn2HwbaJ/view and then unzip the zip file by 
-
-```shell
-unzip m4singer_hifigan.zip
-```
+If you want to adjust the config file, you can duplicate a new config file and modify some parameters.
 
 
 ```shell
@@ -116,17 +124,30 @@ python train.py -t -c Your_new_configfile_path -p The_teacher_model_checkpoint_p
 ## Inference
 You should put the audios you want to convert under the `raw` directory firstly.
 
-If you want to use the teacher model for inference, you can run 
+### Inference by the Teacher Model
 
 ```shell
 # Example
 python inference_main.py -tm "logs/teacher/model_800000.pth" -tc "logs/teacher/config.yaml" -n "src.wav" -k 0 -s "target_singer"
 ```
+-tm refers to the teacher_model_path
 
+-tc refers to the teacher_config_path
 
-If you want to use the student model CoMOSVC for inference, you can run 
+-n refers to the source audio
+
+-k refers to the pitch shift, it can be positive and negative (semitone) values
+
+-s refers to the target singer
+
+### Inference by the Consistency Model
 
 ```shell
 # Example
 python inference_main.py -cm "logs/como/model_800000.pth" -tc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
 ```
+-cm refers to the como_model_path
+
+-cc refers to the como_config_path
+
+-t means it is not the teacher model and you don't need to specify anything after it 
