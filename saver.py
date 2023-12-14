@@ -16,9 +16,10 @@ class Saver(object):
     def __init__(
             self, 
             args,
+            save_dir,
             initial_global_step=-1):
 
-        self.expdir = args.env.expdir
+        self.expdir = save_dir
         self.sample_rate = args.data.sampling_rate
         
         # cold start

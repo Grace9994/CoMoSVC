@@ -5,7 +5,7 @@ from torch.nn import Conv1d, ConvTranspose1d, AvgPool1d, Conv2d
 from torch.nn.utils import weight_norm, remove_weight_norm, spectral_norm
 
 
-from parallel_wavegan import SourceModuleHnNSF
+from vocoder.m4gan.parallel_wavegan import SourceModuleHnNSF
 import numpy as np
 
 LRELU_SLOPE = 0.1
