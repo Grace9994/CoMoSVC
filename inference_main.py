@@ -16,9 +16,9 @@ def main():
     parser.add_argument('-t', '--teacher', action="store_false",help='if it is teacher model')
 
     parser.add_argument('--clip', type=float, default=0, help='Slicing the audios which are to be converted')
-    parser.add_argument('--clean_names', type=str, nargs='+', default=['1.wav'], help='The audios to be converted,should be put in "raw" directory')
+    parser.add_argument('-n','--clean_names', type=str, nargs='+', default=['1.wav'], help='The audios to be converted,should be put in "raw" directory')
     parser.add_argument('-k','--keys', type=int, nargs='+', default=[0], help='To Adjust the Key')
-    parser.add_argument('--spk_list', type=str, nargs='+', default=['singer1'], help='The target singer')
+    parser.add_argument('-s','--spk_list', type=str, nargs='+', default=['singer1'], help='The target singer')
     parser.add_argument('-cm','--como_model_path', type=str, default="./logs/como/model_800000.pt", help='the path to checkpoint of CoMoSVC')
     parser.add_argument('-cc','--como_config_path', type=str, default="./logs/como/config.yaml", help='the path to config file of CoMoSVC')
     parser.add_argument('-tm','--teacher_model_path', type=str, default="./logs/teacher/model_800000.pt", help='the path to checkpoint of Teacher Model')
