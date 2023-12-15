@@ -127,8 +127,7 @@ You should put the audios you want to convert under the `raw` directory firstly.
 ### Inference by the Teacher Model
 
 ```shell
-# Example
-python inference_main.py -tm "logs/teacher/model_800000.pth" -tc "logs/teacher/config.yaml" -n "src.wav" -k 0 -s "target_singer"
+python inference_main.py -tm "logs/teacher/model_800000.pt" -tc "logs/teacher/config.yaml" -n "src.wav" -k 0 -s "target_singer"
 ```
 -tm refers to the teacher_model_path
 
@@ -143,8 +142,7 @@ python inference_main.py -tm "logs/teacher/model_800000.pth" -tc "logs/teacher/c
 ### Inference by the Consistency Model
 
 ```shell
-# Example
-python inference_main.py -cm "logs/como/model_800000.pth" -tc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
+python inference_main.py -cm "logs/como/model_800000.pt" -tc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
 ```
 -cm refers to the como_model_path
 
