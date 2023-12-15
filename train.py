@@ -103,12 +103,7 @@ if __name__ == '__main__':
 
     for param_group in optimizer.param_groups:
         param_group['initial_lr'] = args.train.lr
-
-        if cmd.teacher:
-            param_group['lr'] = args.train.lr
-        else:
-            param_group['lr'] = args.train.lr * (args.train.gamma ** max(((initial_global_step-2)//args.train.decay_step),0) )
-
+        param_group['lr'] = args.train.lr * (args.train.gamma ** max(((initial_global_step-2)//args.train.decay_step),0) )
         param_group['weight_decay'] = args.train.weight_decay
     scheduler = lr_scheduler.StepLR(optimizer, step_size=args.train.decay_step, gamma=args.train.gamma,last_epoch=initial_global_step-2)
     
