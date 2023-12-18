@@ -164,7 +164,7 @@ def train(args, initial_global_step, model, optimizer, scheduler, vocoder, loade
                         epoch,
                         batch_idx,
                         num_batches,
-                        args.env.expdir,
+                        save_dir,
                         args.train.interval_log/saver.get_interval_time(),
                         current_lr,
                         loss.item(),
