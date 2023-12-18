@@ -43,6 +43,7 @@ train:
   interval_val: 2000
   interval_force_save: 2000
   lr: 0.0001
+  comolr: 0.00005
   decay_step: 100000
   gamma: 0.5
   weight_decay: 0
