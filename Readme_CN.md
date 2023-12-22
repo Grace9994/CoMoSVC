@@ -155,7 +155,7 @@ python inference_main.py -tm "logs/teacher/model_800000.pt" -tc "logs/teacher/co
 ### 采用CoMoSVC进行推理
 
 ```shell
-python inference_main.py -cm "logs/como/model_800000.pt" -tc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
+python inference_main.py -cm "logs/como/model_800000.pt" -cc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
 ```
 
 -cm CoMoSVC模型路径
