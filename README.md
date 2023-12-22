@@ -142,7 +142,7 @@ python inference_main.py -tm "logs/teacher/model_800000.pt" -tc "logs/teacher/co
 ### Inference by the Consistency Model
 
 ```shell
-python inference_main.py -cm "logs/como/model_800000.pt" -tc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
+python inference_main.py -cm "logs/como/model_800000.pt" -cc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
 ```
 -cm refers to the como_model_path
 
