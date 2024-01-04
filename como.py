@@ -131,18 +131,10 @@ class Como(BaseModule):
             f_theta_ema = self.EDMPrecond( y_tn, tn,cond, self.denoise_fn_ema)
 
         loss =   (f_theta - f_theta_ema.detach()) ** 2 # For consistency model, lembda=1
-        pitch_theta = self.pe(f_theta)['pitch_pred']
-        with torch.no_grad():
-            pitch_theta_ema = self.pe(f_theta_ema)['pitch_pred']
-            pitch_theta_ema = pitch_theta_ema.detach()
-            uvmask = pitch_theta_ema[:,:,1]>0
-        loss_pitch = (pitch_theta[:,:,0]-pitch_theta_ema[:,:,0]) ** 2
-        loss_pitch = loss_pitch *(1-uvmask.long())
-        loss_pitch = loss_pitch.mean()
         loss=loss.unsqueeze(1).unsqueeze(1)
         loss=loss.mean()  
         
-        return [loss,loss_pitch]
+        return loss
 
     def c_t_d(self, i ):
         return self.t_steps[i]
