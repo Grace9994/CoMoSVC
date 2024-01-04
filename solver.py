@@ -137,11 +137,11 @@ def train(args, initial_global_step, model, optimizer, scheduler, vocoder, loade
                 with autocast(device_type=args.device, dtype=dtype):
                     loss = model(data['units'], data['f0'], data['volume'], data['spk_id'], 
                                     aug_shift = data['aug_shift'], gt_spec=data['mel'], infer=False)
-            if not teacher:        
-                loss_mel = loss[0]*50 
-                loss_pitch = loss[1] 
-                loss = loss_mel +loss_pitch
-            # loss=loss*1000
+            # if not teacher:        
+            #     loss_mel = loss[0]*50 
+            #     loss_pitch = loss[1] 
+            #     loss = loss_mel +loss_pitch
+            loss=loss*1000
             # handle nan loss
             if torch.isnan(loss):
                 raise ValueError(' [x] nan loss ')
@@ -177,13 +177,13 @@ def train(args, initial_global_step, model, optimizer, scheduler, vocoder, loade
                     'train/loss': loss.item()
                 })
 
-                if not teacher:
-                    saver.log_value({
-                        'train/loss_pitch': loss_pitch.item()
-                    })
-                    saver.log_value({
-                        'train/loss_mel': loss_mel.item()
-                    })
+                # if not teacher:
+                #     saver.log_value({
+                #         'train/loss_pitch': loss_pitch.item()
+                #     })
+                #     saver.log_value({
+                #         'train/loss_mel': loss_mel.item()
+                #     })
                 
                 saver.log_value({
                     'train/lr': current_lr
