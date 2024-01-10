@@ -1,12 +1,12 @@
 <div align="center">
-<h1>CoMoSVC: One-Step Consistency Model Based Singing Voice Conversion</h1>
+<h1>CoMoSVC: Consistency Model Based Singing Voice Conversion</h1>
 
 [中文文档](./Readme_CN.md)
 </div>
 
 We propose a consistency model based Singing Voice Conversion system, which is inspired by [CoMoSpeech](https://github.com/zhenye234/CoMoSpeech): One-Step Speech and Singing Voice Synthesis via Consistency Model. 
 
-The paper and codebase of CoMoSVC are still being edited and will be completed as soon as possible.
+This is an implemention of the paper [CoMoSVC](https://arxiv.org/pdf/2401.01792.pdf).
 
 
 ## Environment
