@@ -4,10 +4,11 @@
 [中文文档](./Readme_CN.md)
 </div>
 
-We propose a consistency model based Singing Voice Conversion system, which is inspired by [CoMoSpeech](https://github.com/zhenye234/CoMoSpeech): One-Step Speech and Singing Voice Synthesis via Consistency Model. 
+A consistency model based Singing Voice Conversion system is composed, which is inspired by [CoMoSpeech](https://github.com/zhenye234/CoMoSpeech): One-Step Speech and Singing Voice Synthesis via Consistency Model. 
 
 This is an implemention of the paper [CoMoSVC](https://arxiv.org/pdf/2401.01792.pdf).
 
+<center><img src="https://comosvc.github.io/table3.jpg" width="800"></center>
 
 ## Environment
 We have tested the code and it runs successfully on Python 3.8, so you can set up your Conda environment using the following command:
