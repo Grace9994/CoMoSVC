@@ -7,19 +7,7 @@
 A consistency model based Singing Voice Conversion system is composed, which is inspired by [CoMoSpeech](https://github.com/zhenye234/CoMoSpeech): One-Step Speech and Singing Voice Synthesis via Consistency Model. 
 
 This is an implemention of the paper [CoMoSVC](https://arxiv.org/pdf/2401.01792.pdf).
-## Inprovements
-
-  </div><div class="image-container">
-    <div style="float: left; width: 50%;">
-      <p style="text-align: left;"><img src="https://comosvc.github.io/training_pic.jpg" width="50%"></p>
-      <h3 style="text-align: center; font-size: 14px;"><b>Figure 1: </b>The Training Process</h3>
-      <!-- <h3 style="text-align: center;">Training Picture</h3> -->
-    </div>
-    <div style="float: left; width: 50%;">
-      <p style="text-align: right;"><img src="https://comosvc.github.io/sampling_pic.jpg" width=50%"></p>
-      <h3 style="text-align: center;font-size: 14px"><b>Figure 2: </b>The Inference Process</h3>
-    </div>
-    <div style="clear: both;"></div>
+## Improvements
 The subjective evaluations are illustrated through the table below.
 <center><img src="https://comosvc.github.io/table3.jpg" width="800"></center>
 
