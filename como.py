@@ -54,10 +54,17 @@ class Como(BaseModule):
         self.rho=7 
         self.N = 25   
         self.total_steps=total_steps
+        self.spec_min=-6
+        self.spec_max=1.5
         step_indices = torch.arange(self.N)   
         t_steps = (self.sigma_min ** (1 / self.rho) + step_indices / (self.N - 1) * (self.sigma_max ** (1 / self.rho) - self.sigma_min ** (1 / self.rho))) ** self.rho
         self.t_steps = torch.cat([torch.zeros_like(t_steps[:1]), self.round_sigma(t_steps)])   # round_tensorj将数据转为tensor
- 
+    
+    def norm_spec(self, x):
+        return (x - self.spec_min) / (self.spec_max - self.spec_min) * 2 - 1
+
+    def denorm_spec(self, x):
+        return (x + 1) / 2 * (self.spec_max - self.spec_min) + self.spec_min
 
     def EDMPrecond(self, x, sigma ,cond,denoise_fn):
         sigma = sigma.reshape(-1, 1, 1 ) 
@@ -125,18 +132,10 @@ class Como(BaseModule):
             f_theta_ema = self.EDMPrecond( y_tn, tn,cond, self.denoise_fn_ema)
 
         loss =   (f_theta - f_theta_ema.detach()) ** 2 # For consistency model, lembda=1
-        pitch_theta = self.pe(f_theta)['pitch_pred']
-        with torch.no_grad():
-            pitch_theta_ema = self.pe(f_theta_ema)['pitch_pred']
-            pitch_theta_ema = pitch_theta_ema.detach()
-            uvmask = pitch_theta_ema[:,:,1]>0
-        loss_pitch = (pitch_theta[:,:,0]-pitch_theta_ema[:,:,0]) ** 2
-        loss_pitch = loss_pitch *(1-uvmask.long())
-        loss_pitch = loss_pitch.mean()
         loss=loss.unsqueeze(1).unsqueeze(1)
         loss=loss.mean()  
         
-        return [loss,loss_pitch]
+        return loss
 
     def c_t_d(self, i ):
         return self.t_steps[i]
@@ -167,6 +166,7 @@ class Como(BaseModule):
 
         if self.teacher: # teacher model  
             if not infer: # training
+                x=self.norm_spec(x)
                 loss = self.EDMLoss(x, cond)            
                 return loss
             else: # infer
@@ -174,14 +174,20 @@ class Como(BaseModule):
                 x = torch.randn(shape, device=cond.device)
                 x=self.edm_sampler(x, cond, self.total_steps)
 
-            return x
+            return self.denorm_spec(x)
         else:  #Consistency distillation
             if not infer: # training
+                x=self.norm_spec(x)
                 loss = self.CTLoss_D(x, cond)
                 return loss
             else: # infer
                 shape = (cond.shape[0], 80, cond.shape[1])
                 x = torch.randn(shape, device=cond.device) # The Input is the Random Noise
+<<<<<<< HEAD
                 x=self.CT_sampler(x,cond,self.total_steps) 
             return x
+=======
+                x=self.CT_sampler(x,cond,t_steps) 
+            return self.denorm_spec(x)
+>>>>>>> 11a2280c6f4711aeff5b3cf9572857fb5308f963
  
