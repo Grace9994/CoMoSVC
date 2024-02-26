@@ -173,7 +173,6 @@ class Como(BaseModule):
                 shape = (cond.shape[0], 80, cond.shape[1])
                 x = torch.randn(shape, device=cond.device)
                 x=self.edm_sampler(x, cond, self.total_steps)
-
             return self.denorm_spec(x)
         else:  #Consistency distillation
             if not infer: # training
@@ -183,11 +182,7 @@ class Como(BaseModule):
             else: # infer
                 shape = (cond.shape[0], 80, cond.shape[1])
                 x = torch.randn(shape, device=cond.device) # The Input is the Random Noise
-<<<<<<< HEAD
                 x=self.CT_sampler(x,cond,self.total_steps) 
-            return x
-=======
-                x=self.CT_sampler(x,cond,t_steps) 
             return self.denorm_spec(x)
->>>>>>> 11a2280c6f4711aeff5b3cf9572857fb5308f963
+
  
