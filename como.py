@@ -36,7 +36,7 @@ class BaseModule(torch.nn.Module):
 
 
 class Como(BaseModule):
-    def __init__(self, out_dims, n_layers, n_chans, n_hidden,teacher = True ):
+    def __init__(self, out_dims, n_layers, n_chans, n_hidden,total_steps,teacher = True ):
         super().__init__()
         self.denoise_fn = WaveNet(out_dims, n_layers, n_chans, n_hidden)
         self.pe= PitchExtractor()
@@ -53,6 +53,7 @@ class Como(BaseModule):
         self.sigma_max= 80
         self.rho=7 
         self.N = 25   
+        self.total_steps=total_steps
         step_indices = torch.arange(self.N)   
         t_steps = (self.sigma_min ** (1 / self.rho) + step_indices / (self.N - 1) * (self.sigma_max ** (1 / self.rho) - self.sigma_min ** (1 / self.rho))) ** self.rho
         self.t_steps = torch.cat([torch.zeros_like(t_steps[:1]), self.round_sigma(t_steps)])   # round_tensorj将数据转为tensor
@@ -162,7 +163,7 @@ class Como(BaseModule):
             x = self.EDMPrecond(x_tn, t,cond,self.denoise_fn)
         return x
 
-    def forward(self, x, cond, t_steps=1, infer=False):
+    def forward(self, x, cond, infer=False):
 
         if self.teacher: # teacher model  
             if not infer: # training
@@ -171,7 +172,7 @@ class Como(BaseModule):
             else: # infer
                 shape = (cond.shape[0], 80, cond.shape[1])
                 x = torch.randn(shape, device=cond.device)
-                x=self.edm_sampler(x, cond, t_steps)
+                x=self.edm_sampler(x, cond, self.total_steps)
 
             return x
         else:  #Consistency distillation
@@ -181,6 +182,6 @@ class Como(BaseModule):
             else: # infer
                 shape = (cond.shape[0], 80, cond.shape[1])
                 x = torch.randn(shape, device=cond.device) # The Input is the Random Noise
-                x=self.CT_sampler(x,cond,t_steps) 
+                x=self.CT_sampler(x,cond,self.total_steps) 
             return x
  

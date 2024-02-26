@@ -14,6 +14,8 @@ def main():
 
     parser = argparse.ArgumentParser(description='comosvc inference')
     parser.add_argument('-t', '--teacher', action="store_false",help='if it is teacher model')
+    parser.add_argument('-ts', '--total_steps', type=int,default=1,help='the total number of iterative steps during inference')
+
 
     parser.add_argument('--clip', type=float, default=0, help='Slicing the audios which are to be converted')
     parser.add_argument('-n','--clean_names', type=str, nargs='+', default=['1.wav'], help='The audios to be converted,should be put in "raw" directory')
@@ -45,6 +47,7 @@ def main():
 
     svc_model = Svc(diffusion_model_path,
                     diffusion_config_path,
+                    args.total_steps,
                     args.teacher)
     
     infer_tool.mkdir(["raw", resultfolder])

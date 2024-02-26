@@ -19,6 +19,7 @@ def load_model_vocoder(
         model_path,
         device='cpu',
         config_path = None,
+        total_steps=1,
         teacher=False
         ):
     if config_path is None:
@@ -42,6 +43,7 @@ def load_model_vocoder(
                 args.model.n_layers,
                 args.model.n_chans,
                 args.model.n_hidden,
+                total_steps,
                 teacher      
                 )
     
@@ -63,6 +65,7 @@ class ComoSVC(nn.Module):
             n_layers=20, 
             n_chans=384, 
             n_hidden=100,
+            total_steps=1,
             teacher=True
             ):
         super().__init__()
@@ -80,7 +83,7 @@ class ComoSVC(nn.Module):
         if n_spk is not None and n_spk > 1:
             self.spk_embed = nn.Embedding(n_spk, n_hidden)
         self.n_hidden = n_hidden
-        self.decoder = Como(out_dims, n_layers, n_chans, n_hidden,teacher) 
+        self.decoder = Como(out_dims, n_layers, n_chans, n_hidden, total_steps, teacher) 
         self.input_channel = input_channel
 
     def forward(self, units, f0, volume, spk_id = None, aug_shift = None,

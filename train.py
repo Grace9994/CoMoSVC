@@ -33,6 +33,13 @@ def parse_args(args=None, namespace=None):
         "--teacher",
         action='store_false',
         help="if it is the teacher model")
+
+    parser.add_argument(
+        "-s",
+        "--total_steps",
+        type=int,
+        default=1,
+        help="the number of iterative steps during inference")
     
     parser.add_argument(
         "-p",
@@ -65,6 +72,7 @@ if __name__ == '__main__':
                     args.model.n_layers,
                     args.model.n_chans,
                     args.model.n_hidden,
+                    cmd.total_steps,
                     teacher=cmd.teacher
                     )
         
@@ -80,6 +88,7 @@ if __name__ == '__main__':
                     args.model.n_layers,
                     args.model.n_chans,
                     args.model.n_hidden,
+                    cmd.total_steps,
                     teacher=cmd.teacher
                     )
         model = load_teacher_model_with_pitch(model,checkpoint_dir=cmd.teacher_model_path) # teacher model path

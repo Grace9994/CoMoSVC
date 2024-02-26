@@ -69,12 +69,13 @@ class Svc(object):
     def __init__(self,
                  diffusion_model_path="logs/como/model_8000.pt",
                  diffusion_config_path="configs/diffusion.yaml",
+                 total_steps=1,
                  teacher = False
                  ):
 
         self.teacher = teacher
         self.dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.diffusion_model,self.vocoder,self.diffusion_args = load_model_vocoder(diffusion_model_path,self.dev,config_path=diffusion_config_path,teacher=self.teacher)
+        self.diffusion_model,self.vocoder,self.diffusion_args = load_model_vocoder(diffusion_model_path,self.dev,config_path=diffusion_config_path,total_steps=self.total_steps,teacher=self.teacher)
         self.target_sample = self.diffusion_args.data.sampling_rate
         self.hop_size = self.diffusion_args.data.hop_length
         self.spk2id = self.diffusion_args.spk
