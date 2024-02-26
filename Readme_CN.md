@@ -137,8 +137,9 @@ python train.py -t -c Your_new_configfile_path -p The_teacher_model_checkpoint_p
 ### 采用教师模型的推理
 
 ```shell
-python inference_main.py -tm "logs/teacher/model_800000.pt" -tc "logs/teacher/config.yaml" -n "src.wav" -k 0 -s "target_singer"
+python inference_main.py -ts 50 -tm "logs/teacher/model_800000.pt" -tc "logs/teacher/config.yaml" -n "src.wav" -k 0 -s "target_singer"
 ```
+-ts 教师模型推理时的迭代步数
 
 -tm 教师模型路径
 
@@ -155,8 +156,9 @@ python inference_main.py -tm "logs/teacher/model_800000.pt" -tc "logs/teacher/co
 ### 采用CoMoSVC进行推理
 
 ```shell
-python inference_main.py -cm "logs/como/model_800000.pt" -cc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
+python inference_main.py -ts 1 -cm "logs/como/model_800000.pt" -cc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
 ```
+-ts 学生模型推理时的迭代步数
 
 -cm CoMoSVC模型路径
 
