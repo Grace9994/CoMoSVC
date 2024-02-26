@@ -1,13 +1,15 @@
 <div align="center">
-<h1>CoMoSVC: One-Step Consistency Model Based Singing Voice Conversion</h1>
+<h1>CoMoSVC: Consistency Model Based Singing Voice Conversion</h1>
 
 [中文文档](./Readme_CN.md)
 </div>
 
-We propose a consistency model based Singing Voice Conversion system, which is inspired by [CoMoSpeech](https://github.com/zhenye234/CoMoSpeech): One-Step Speech and Singing Voice Synthesis via Consistency Model. 
+A consistency model based Singing Voice Conversion system is composed, which is inspired by [CoMoSpeech](https://github.com/zhenye234/CoMoSpeech): One-Step Speech and Singing Voice Synthesis via Consistency Model. 
 
-The paper and codebase of CoMoSVC are still being edited and will be completed as soon as possible.
-
+This is an implemention of the paper [CoMoSVC](https://arxiv.org/pdf/2401.01792.pdf).
+## Improvements
+The subjective evaluations are illustrated through the table below.
+<center><img src="https://comosvc.github.io/table3.jpg" width="800"></center>
 
 ## Environment
 We have tested the code and it runs successfully on Python 3.8, so you can set up your Conda environment using the following command:
@@ -142,7 +144,7 @@ python inference_main.py -tm "logs/teacher/model_800000.pt" -tc "logs/teacher/co
 ### Inference by the Consistency Model
 
 ```shell
-python inference_main.py -cm "logs/como/model_800000.pt" -tc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
+python inference_main.py -cm "logs/como/model_800000.pt" -cc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
 ```
 -cm refers to the como_model_path
 

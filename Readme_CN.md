@@ -2,8 +2,8 @@
 <h1>CoMoSVC: One-Step Consistency Model Based Singing Voice Conversion</h1>
 </div>
 
-基于一致性模型的歌声转换及克隆系统，可以一步diffusion采样进行歌声转换。工作基于[CoMoSpeech](https://github.com/zhenye234/CoMoSpeech): One-Step Speech and Singing Voice Synthesis via Consistency Model. 
-相关论文细节会尽快公布。
+基于一致性模型的歌声转换及克隆系统，可以一步diffusion采样进行歌声转换，是对论文[CoMoSVC](https://arxiv.org/pdf/2401.01792.pdf)的实现。工作基于[CoMoSpeech](https://github.com/zhenye234/CoMoSpeech): One-Step Speech and Singing Voice Synthesis via Consistency Model. 
+
 
 
 # 环境配置
@@ -155,7 +155,7 @@ python inference_main.py -tm "logs/teacher/model_800000.pt" -tc "logs/teacher/co
 ### 采用CoMoSVC进行推理
 
 ```shell
-python inference_main.py -cm "logs/como/model_800000.pt" -tc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
+python inference_main.py -cm "logs/como/model_800000.pt" -cc "logs/como/config.yaml" -n "src.wav" -k 0 -s "target_singer" -t
 ```
 
 -cm CoMoSVC模型路径

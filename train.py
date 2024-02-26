@@ -5,7 +5,6 @@ from loguru import logger
 from torch.optim import lr_scheduler
 
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]='1'
 
 from data_loaders import get_data_loaders
 import utils
