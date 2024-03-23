@@ -74,6 +74,7 @@ class Svc(object):
                  ):
 
         self.teacher = teacher
+        self.total_steps=total_steps
         self.dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.diffusion_model,self.vocoder,self.diffusion_args = load_model_vocoder(diffusion_model_path,self.dev,config_path=diffusion_config_path,total_steps=self.total_steps,teacher=self.teacher)
         self.target_sample = self.diffusion_args.data.sampling_rate
